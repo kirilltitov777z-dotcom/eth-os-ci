@@ -21,9 +21,11 @@ MOD="$ROOT/qazaqdlc/build.gradle"
 sed -i 's/compileSdkVersion 30/compileSdk 34/' "$MOD"
 sed -i "/android {/a\\    namespace 'qazaq.dlc'" "$MOD"
 
-# 4. В репозитории нет res/mipmap, а манифест ссылается на иконку
+# 4. Манифест: нет res/mipmap, AGP 8 требует exported и не любит package=
 MAN="$ROOT/qazaqdlc/src/main/AndroidManifest.xml"
 sed -i '/android:icon="@mipmap\/qazaqdlc"/d' "$MAN"
+sed -i 's/package="qazaq.dlc"//' "$MAN"
+sed -i 's/<activity android:name="qazaq.dlc">/<activity android:name="qazaq.dlc" android:exported="true">/' "$MAN"
 
 # 5. Регистр имени файла в upstream не совпадает с Linux-ФС
 INC="$ROOT/qazaqdlc/src/main/jni/includes.hpp"
