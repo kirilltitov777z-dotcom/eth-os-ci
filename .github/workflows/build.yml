@@ -47,7 +47,6 @@ jobs:
 
       - name: Prepare sources
         run: bash ci/scripts/prepare.sh
-        working-directory: upstream
 
       - name: Build with Gradle + ndk-build
         run: gradle assembleDebug --no-daemon --stacktrace
