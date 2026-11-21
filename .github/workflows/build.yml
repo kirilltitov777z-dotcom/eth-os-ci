@@ -1,0 +1,77 @@
+name: Build eth-os (qazaqdlc) via CI
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout upstream eth-os
+        uses: actions/checkout@v4
+        with:
+          repository: ethereal-sol/eth-os
+          ref: main
+          path: upstream
+          fetch-depth: 1
+
+      - name: Checkout this CI repo (scripts)
+        uses: actions/checkout@v4
+        with:
+          path: ci
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: |
+          sdkmanager --install "platforms;android-34" "build-tools;34.0.0" "ndk;22.0.7026061"
+          yes | sdkmanager --licenses > /dev/null || true
+
+      - name: Prepare sources
+        run: bash ci/scripts/prepare.sh
+        working-directory: upstream
+
+      - name: Build with Gradle + ndk-build
+        run: gradle assembleDebug --no-daemon --stacktrace
+        working-directory: upstream
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p out
+          find upstream -name '*.apk' -type f -exec cp {} out/ \;
+          find upstream -name 'libqazaqdlc.so' -type f -exec cp {} out/ \;
+          ls -lh out
+          test -n "$(ls -A out)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eth-os-build
+          path: out/*
+          if-no-files-found: error
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: eth-os-${{ github.run_number }}
+          name: eth-os CI build #${{ github.run_number }}
+          body: |
+            Сборка исходников ethereal-sol/eth-os через GitHub Actions.
+            Внутри: APK и нативная библиотека libqazaqdlc.so (arm64-v8a).
+          files: out/*
+          generate_release_notes: true
