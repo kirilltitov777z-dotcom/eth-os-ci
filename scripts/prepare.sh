@@ -3,7 +3,7 @@
 # Вызывается из корня чекаута upstream-репозитория.
 set -euo pipefail
 
-ROOT="ethereal - os"
+ROOT="upstream/ethereal - os"
 [ -d "$ROOT" ] || { echo "Не найдена папка '$ROOT'"; exit 1; }
 
 # 1. Без settings.gradle Gradle не видит модуль qazaqdlc
