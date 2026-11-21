@@ -36,12 +36,13 @@ jobs:
         with:
           gradle-version: '8.7'
 
-      - uses: android-actions/setup-android@v3
-
+      # На ubuntu-latest Android SDK уже установлен; setup-android@v3 падает
+      # при попытке поставитьLegacy-пакет 'tools', поэтому ставим только нужное.
       - name: Install Android SDK packages
         run: |
-          sdkmanager --install "platforms;android-34" "build-tools;34.0.0" "ndk;22.0.7026061"
+          echo "ANDROID_HOME=$ANDROID_HOME"
           yes | sdkmanager --licenses > /dev/null || true
+          sdkmanager --install "platforms;android-34" "build-tools;34.0.0" "ndk;22.0.7026061"
 
       - name: Prepare sources
         run: bash ci/scripts/prepare.sh
