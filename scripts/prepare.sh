@@ -10,6 +10,7 @@ ROOT="ethereal - os"
 cat > settings.gradle <<'EOF'
 rootProject.name = 'eth-os-ci'
 include ':qazaqdlc'
+project(':qazaqdlc').projectDir = file('ethereal - os/qazaqdlc')
 EOF
 
 # 2. jcenter() закрыт, AGP 7.0 слишком стар для Gradle 8
