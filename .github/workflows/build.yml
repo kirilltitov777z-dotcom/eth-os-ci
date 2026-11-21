@@ -46,12 +46,12 @@ jobs:
           "$SDKMGR" --install "platforms;android-34" "build-tools;34.0.0" "ndk;22.0.7026061"
 
       - name: Prepare sources
-        run: bash ../ci/scripts/prepare.sh
+        run: bash ci/scripts/prepare.sh
         working-directory: upstream
 
       - name: Build with Gradle + ndk-build
         run: gradle assembleDebug --no-daemon --stacktrace
-        working-directory: upstream
+        working-directory: upstream/ethereal - os
 
       - name: Collect artifacts
         run: |

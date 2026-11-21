@@ -7,10 +7,9 @@ ROOT="ethereal - os"
 [ -d "$ROOT" ] || { echo "Не найдена папка '$ROOT'"; exit 1; }
 
 # 1. Без settings.gradle Gradle не видит модуль qazaqdlc
-cat > settings.gradle <<'EOF'
+cat > "$ROOT/settings.gradle" <<'EOF'
 rootProject.name = 'eth-os-ci'
 include ':qazaqdlc'
-project(':qazaqdlc').projectDir = file('ethereal - os/qazaqdlc')
 EOF
 
 # 2. jcenter() закрыт, AGP 7.0 слишком стар для Gradle 8
