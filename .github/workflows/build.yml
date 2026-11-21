@@ -45,12 +45,16 @@ jobs:
           yes | "$SDKMGR" --licenses > /dev/null || true
           "$SDKMGR" --install "platforms;android-34" "build-tools;34.0.0" "ndk;22.0.7026061"
 
+      # ndk-build не понимает пробелы в путях ("ethereal - os")
+      - name: Normalize source path
+        run: cp -r "upstream/ethereal - os" upstream/eth-os
+
       - name: Prepare sources
         run: bash ci/scripts/prepare.sh
 
       - name: Build with Gradle + ndk-build
         run: gradle assembleDebug --no-daemon --stacktrace
-        working-directory: upstream/ethereal - os
+        working-directory: upstream/eth-os
 
       - name: Collect artifacts
         run: |
