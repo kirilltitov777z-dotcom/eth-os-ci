@@ -40,9 +40,10 @@ jobs:
       # при попытке поставитьLegacy-пакет 'tools', поэтому ставим только нужное.
       - name: Install Android SDK packages
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          yes | sdkmanager --licenses > /dev/null || true
-          sdkmanager --install "platforms;android-34" "build-tools;34.0.0" "ndk;22.0.7026061"
+          SDKMGR=$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -1)
+          echo "sdkmanager: $SDKMGR"
+          yes | "$SDKMGR" --licenses > /dev/null || true
+          "$SDKMGR" --install "platforms;android-34" "build-tools;34.0.0" "ndk;22.0.7026061"
 
       - name: Prepare sources
         run: bash ci/scripts/prepare.sh
